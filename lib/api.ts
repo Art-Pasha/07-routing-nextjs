@@ -11,6 +11,7 @@ export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
+  tag?: string;
 }
 
 export interface FetchNotesResponse {
@@ -21,13 +22,18 @@ export interface FetchNotesResponse {
 export const fetchNotes = async (
   params: FetchNotesParams
 ): Promise<FetchNotesResponse> => {
-  const { page = 1, perPage = 12, search = '' } = params;
+  const { page = 1, perPage = 12, search = '', tag } = params;
+
+  // Бекенд не очікує тег "all" — якщо обрано "All notes", параметр
+  // tag взагалі не передається, і сервер повертає всі нотатки.
+  const shouldFilterByTag = Boolean(tag) && tag !== 'all';
 
   const response = await axios.get<FetchNotesResponse>('/notes', {
     params: {
       page,
       perPage,
       ...(search.trim() !== '' && { search: search.trim() }),
+      ...(shouldFilterByTag && { tag }),
     },
   });
 

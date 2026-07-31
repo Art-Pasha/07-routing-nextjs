@@ -1,12 +1,17 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNoteById } from '../../../lib/api';
 import css from './NoteDetails.module.css';
 
 export default function NoteDetails() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.back();
+  };
 
   const {
     data: note,
@@ -29,6 +34,9 @@ export default function NoteDetails() {
   return (
     <main className={css.main}>
       <div className={css.container}>
+        <button type="button" className={css.backBtn} onClick={handleBack}>
+          ← Back
+        </button>
         <div className={css.item}>
           <div className={css.header}>
             <h2>{note.title}</h2>
